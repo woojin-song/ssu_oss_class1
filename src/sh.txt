@@ -1,0 +1,179 @@
+#셀 스크립트 활용 과제
+#20252336 송우진
+
+ex3-0.sh
+vim ~/.bashrc
+
+source ~/.bashrc
+
+unset MYENV
+
+ex3-1.sh
+#!/bin/bash
+
+num1=$1
+num2=$2
+
+echo "Add: $(($num1 + $num2))"
+echo "Sub: $(($num1 - $num2))"
+echo "Mul: $(($num1 * $num2))"
+echo "Div: $(($num1 / $num2))"
+
+ex3-2.sh
+#!/bin/bash
+
+for x in "$@"
+do
+    result=$(echo "0.5 * $x * $x" | bc -l)
+    echo "x=$x, y=$result"
+done
+
+ex3-3.sh
+#!/bin/bash
+
+sum=0
+count=$#
+
+for score in "$@"
+do
+    if [ "$score" -ge 90 ]; then
+        echo "Score: $score -> A"
+    else
+        echo "Score: $score -> B"
+    fi
+    sum=$(($sum + $score))
+done
+
+avg=$(($sum / $count))
+
+if [ "$avg" -ge 90 ]; then
+    echo "Average : A"
+else
+    echo "Average : B"
+fi
+
+ex3-4.sh
+#!/bin/bash
+
+scores=()
+
+while true; do
+    echo "1) 과목 성적 추가 2) 입력된 모든 점수 보기 3) 평균 점수 확인 4) 평균 등급(GPA) 변환 5) 종료"
+    read -p "선택: " menu
+
+    case $menu in
+        1)
+            read -p "점수 입력: " s
+            scores+=($s)
+            ;;
+        2)
+            echo "입력된 모든 점수: ${scores[@]}"
+            ;;
+        3)
+            if [ ${#scores[@]} -gt 0 ]; then
+                sum=0
+                for i in "${scores[@]}"; do
+                    
+                    sum=$(echo "$sum + $i" | bc -l)
+                done
+                # 평균 점수 = 총점 / 개수
+                echo "평균 점수: $(echo "$sum / ${#scores[@]}" | bc -l)"
+            else
+                echo "입력된 점수가 없습니다."
+            fi
+            ;;
+        4)
+            if [ ${#scores[@]} -gt 0 ]; then
+                sum=0
+                for i in "${scores[@]}"; do
+                    
+                    sum=$(echo "$sum + $i" | bc -l)
+                done
+                
+                
+                gpa=$(echo "$sum / ${#scores[@]}" | bc -l)
+                echo "평균 등급 (GPA): $gpa"
+            else
+                echo "입력된 점수가 없습니다."
+            fi
+            ;;
+        5)
+            echo "종료"
+            break
+            ;;
+    esac
+done
+ex3-5.sh
+#!/bin/bash
+run_cmd() {
+    
+    eval "$@"
+}
+
+run_cmd "$@"
+
+ex3-6.sh
+import sys
+print("Args:", sys.argv[1:])
+
+#!/bin/bash 
+echo "Run Python”
+python3 my_prog.py "$@"
+ex3-7.sh
+#!/bin/bash
+echo "1) 사용자 2) CPU 3) 메모리 4) 디스크"
+read -p "선택: " choice
+
+case $choice in
+    1) whoami ;;
+    2) top -b -n 1 | head -n 5 ;; 
+    3) free -h ;;
+    4) df -h ;;
+esac
+
+ex3-8.sh
+#!/bin/bash
+mkdir -p DB
+
+touch DB/file1.txt DB/file2.txt DB/file3.txt DB/file4.txt DB/file5.txt
+tar -cvf DB/files.tar DB/file*.txt
+
+mkdir -p train
+ln -s ../DB/file1.txt train/link1
+ln -s ../DB/file2.txt train/link2
+ln -s ../DB/file3.txt train/link3
+ln -s ../DB/file4.txt train/link4
+ln -s ../DB/file5.txt train/link5
+
+ex3-9.sh
+#!/bin/bash
+DB_FILE="DB.txt"
+# 파일이 없으면 빈 파일 생성
+touch $DB_FILE
+
+while true; do
+    echo "1) 팀원추가 2) 기록추가 3) 팀원검색 4) 기록검색 5) 종료"
+    read -p "선택: " menu
+
+    case $menu in
+        1)
+            read -p "이름 전화번호: " info
+            echo " $info" >> $DB_FILE
+            ;;
+        2)
+            read -p "날짜 내용: " log
+            echo " $log" >> $DB_FILE
+            ;;
+        3)
+            read -p "검색할 이름: " name
+            grep "$name" $DB_FILE
+            ;;
+        4)
+            read -p "검색할 날짜/내용: " query
+            grep "$query" $DB_FILE
+            ;;
+        5)
+            break
+            ;;
+    esac
+done
